@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>INTERNET POLICE : Apple 17 Series AI Cyber Guardian</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="theme-titanium">
+
+  <!-- Apple iOS 17 Dynamic Island -->
+  <div class="dynamic-island-wrapper">
+    <div class="dynamic-island" id="dynamic-island" onclick="toggleIslandExpansion()">
+      <div class="island-camera"></div>
+      <div class="shield-pulse"></div>
+      <div class="island-sensor">
+        <span id="island-badge">INTERNET POLICE</span>
+        <span style="color:var(--apple-muted); font-size:11px;">|</span>
+        <span id="island-status" style="color:var(--apple-green);">24/7 ARMED</span>
+      </div>
+      <div class="island-wave">
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-container">
+
+    <!-- =========================================================================
+         SCREEN 1: SETUP & ONBOARDING (Shown until permissions are granted)
+         ========================================================================= -->
+    <div id="screen-setup" class="setup-view">
+      <div class="hero-header">
+        <div class="hero-badge">👮 Apple 17 Series Experience</div>
+        <h1 class="hero-title">Internet Police Setup</h1>
+        <p class="hero-sub">
+          Cross-device autonomous cybersecurity guardian. Connect your free LLM API to arm device shields, voice dispatch, and 24/7 background protection.
+        </p>
+      </div>
+
+      <!-- Step 1: Free Model Providers (Click to open popup in browser) -->
+      <div class="glass-panel">
+        <h3 style="font-size:18px; margin-bottom:4px;">1. Choose a Free Model API Provider</h3>
+        <p style="font-size:13px; color:var(--apple-muted); margin-bottom:16px;">
+          Click any card to open the provider's free key creation portal directly in your browser:
+        </p>
+
+        <div class="provider-grid">
+          <div class="provider-card">
+            <div class="provider-top">
+              <span class="provider-icon">⚡</span>
+              <div>
+                <div class="provider-name">Groq Cloud</div>
+                <div style="font-size:11px; color:var(--apple-green);">Llama 3.3 70B & Qwen 27B</div>
+              </div>
+            </div>
+            <div class="provider-desc">800 tokens/sec ultra-fast inference. Permanent free tier, zero card required.</div>
+            <button class="apple-btn" onclick="openKeyPortal('groq')">🔑 Get Free Groq Key</button>
+          </div>
+
+          <div class="provider-card">
+            <div class="provider-top">
+              <span class="provider-icon">🌟</span>
+              <div>
+                <div class="provider-name">Google Gemini</div>
+                <div style="font-size:11px; color:var(--apple-green);">Gemini 2.0 / 1.5 Flash</div>
+              </div>
+            </div>
+            <div class="provider-desc">1 Million tokens context. 1,500 requests/day free (billions of tokens).</div>
+            <button class="apple-btn" onclick="openKeyPortal('gemini')">🔑 Get Free Gemini Key</button>
+          </div>
+
+          <div class="provider-card">
+            <div class="provider-top">
+              <span class="provider-icon">🌐</span>
+              <div>
+                <div class="provider-name">OpenRouter</div>
+                <div style="font-size:11px; color:var(--apple-green);">DeepSeek R1 & Llama 3</div>
+              </div>
+            </div>
+            <div class="provider-desc">Aggregated free tier with :free model endpoints across open-source AI.</div>
+            <button class="apple-btn" onclick="openKeyPortal('openrouter')">🔑 Get OpenRouter Key</button>
+          </div>
+
+          <div class="provider-card">
+            <div class="provider-top">
+              <span class="provider-icon">🚀</span>
+              <div>
+                <div class="provider-name">Cerebras Cloud</div>
+                <div style="font-size:11px; color:var(--apple-green);">1M Free Tokens / Day</div>
+              </div>
+            </div>
+            <div class="provider-desc">1,800+ tokens/sec wafer-scale computing. Free daily allocation.</div>
+            <button class="apple-btn" onclick="openKeyPortal('cerebras')">🔑 Get Cerebras Key</button>
+          </div>
+        </div>
+
+        <!-- Step 2: API Key Input Box (Front and Center) -->
+        <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:20px; margin-top:10px;">
+          <h3 style="font-size:18px; margin-bottom:6px;">2. Enter Your Free API Key</h3>
+          <p style="font-size:13px; color:var(--apple-muted); margin-bottom:14px;">
+            Paste your key below. If you already have one, or want to test offline first, you can proceed immediately:
+          </p>
+
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <select id="setup-provider-select" class="apple-input" style="flex:1; max-width:220px;">
+              <option value="groq">Groq Cloud (Llama/Qwen)</option>
+              <option value="gemini">Google Gemini Flash</option>
+              <option value="openrouter">OpenRouter Free</option>
+              <option value="offline">Offline Police Agent (No Key)</option>
+            </select>
+            <input type="password" id="setup-api-key" class="apple-input" style="flex:2; min-width:260px;" placeholder="Paste API Key (e.g. gsk_... or AIza...)" value="">
+            <button class="apple-btn" style="padding:12px 28px; font-size:15px;" onclick="handleKeySubmit()">Verify & Grant Permissions ➔</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         SCREEN 2: PERMISSION SHEET (Apple iOS 17 Allow All Permissions Sheet)
+         ========================================================================= -->
+    <div id="permission-modal" class="permission-modal">
+      <div class="permission-sheet">
+        <div style="text-align:center; margin-bottom:20px;">
+          <div style="font-size:36px; margin-bottom:8px;">👮</div>
+          <h2 style="font-size:22px; font-weight:700;">Grant Device Permissions</h2>
+          <p style="font-size:13px; color:var(--apple-muted); margin-top:4px;">
+            Authorize Internet Police to establish background device protection and Apple 17 design theme.
+          </p>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-icon">🛡️</div>
+          <div class="perm-text">
+            <h4>Network Ad & Tracker Sinkhole</h4>
+            <p>Silences tracking scripts and Big Tech telemetry at 0.0.0.0.</p>
+          </div>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-icon">🔒</div>
+          <div class="perm-text">
+            <h4>Personal Data Loss Prevention (DLP)</h4>
+            <p>Prevents leak of PAN card, Aadhaar, Credit Cards and Passwords.</p>
+          </div>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-icon">🛑</div>
+          <div class="perm-text">
+            <h4>Zero-Trust Web & App Firewall (WAF)</h4>
+            <p>Blocks SQLi, XSS, Path Traversal, and DDoS flooding attacks.</p>
+          </div>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-icon">🎙️</div>
+          <div class="perm-text">
+            <h4>Jarvis Voice Copilot (Microphone)</h4>
+            <p>Allows real-time voice conversations with Internet Police.</p>
+          </div>
+        </div>
+
+        <div class="perm-item">
+          <div class="perm-icon">⏰</div>
+          <div class="perm-text">
+            <h4>21:00 Nightly Security Dispatch</h4>
+            <p>Daily 9:00 PM security briefing posted directly in your chat.</p>
+          </div>
+        </div>
+
+        <div style="margin-top:24px; display:flex; flex-direction:column; gap:10px;">
+          <button class="apple-btn" style="padding:14px; font-size:16px; border-radius:16px;" onclick="grantAllPermissions()">
+            🛡️ ALLOW ALL PERMISSIONS (पूर्ण सुरक्षा अनुमति दें)
+          </button>
+          <button class="apple-btn-secondary apple-btn" style="border-radius:16px;" onclick="closePermissionModal()">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         SCREEN 3: ACTIVE INTERNET POLICE SUITE (Apple iOS 17 Interface)
+         ========================================================================= -->
+    <div id="screen-main" style="display:none;">
+      
+      <!-- Top Control Bar with Theme Switcher -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+        <div>
+          <h2 style="font-size:24px; font-weight:700;">Internet Police Headquarters</h2>
+          <p style="font-size:13px; color:var(--apple-muted);">Apple 17 Series Liquid Glass Protection Layer Active</p>
+        </div>
+
+        <!-- iOS 17 Wallpaper / Theme Switcher -->
+        <div style="display:flex; gap:8px; align-items:center; background:rgba(255,255,255,0.06); padding:4px 8px; border-radius:30px;">
+          <span style="font-size:11px; color:var(--apple-muted); margin-left:6px;">Wallpaper:</span>
+          <button class="apple-btn-secondary" style="padding:4px 10px; font-size:12px; border-radius:20px;" onclick="setTheme('titanium')">Titanium</button>
+          <button class="apple-btn-secondary" style="padding:4px 10px; font-size:12px; border-radius:20px;" onclick="setTheme('nebula')">Nebula</button>
+          <button class="apple-btn-secondary" style="padding:4px 10px; font-size:12px; border-radius:20px;" onclick="setTheme('midnight')">Midnight</button>
+        </div>
+      </div>
+
+      <!-- Apple iOS 17 Widgets -->
+      <div class="control-center-grid">
+        <div class="widget-card">
+          <div class="widget-title">Inspected Payloads</div>
+          <div class="widget-value" id="widget-total">0</div>
+          <div class="widget-sub">● All Traffic Monitored</div>
+        </div>
+        <div class="widget-card">
+          <div class="widget-title">Trackers Sinkholed</div>
+          <div class="widget-value" id="widget-ads">0</div>
+          <div class="widget-sub">● Dropped to 0.0.0.0</div>
+        </div>
+        <div class="widget-card">
+          <div class="widget-title">Threats Defeated</div>
+          <div class="widget-value" id="widget-threats">0</div>
+          <div class="widget-sub">● Quad9 + DGA Matrix</div>
+        </div>
+        <div class="widget-card">
+          <div class="widget-title">Personal Data Shield</div>
+          <div class="widget-value" id="widget-dlp">0</div>
+          <div class="widget-sub">● PAN/Aadhaar/Cards Masked</div>
+        </div>
+      </div>
+
+      <!-- Main Police Dispatch & Jarvis Voice HQ -->
+      <div class="glass-panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="font-size:22px;">👮</div>
+            <div>
+              <h3 style="font-size:16px;">AI Police Voice Commander</h3>
+              <p style="font-size:12px; color:var(--apple-muted);">Real-time voice & text communication</p>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:8px;">
+            <button class="apple-btn" style="background:#ff9500; font-size:13px; padding:8px 14px;" onclick="triggerNightlyDispatch()">
+              ⏰ 9:00 PM Nightly Dispatch (दैनिक रिपोर्ट)
+            </button>
+            <button class="apple-btn-secondary apple-btn" id="voice-toggle-btn" style="font-size:13px; padding:8px 14px;" onclick="toggleVoiceAudio()">
+              🔊 Voice: ON
+            </button>
+          </div>
+        </div>
+
+        <!-- Chat History Window -->
+        <div class="chat-window">
+          <div class="chat-history" id="police-chat-box">
+            <div class="chat-bubble bubble-police">
+              <strong>👮 Internet Police Chief:</strong> जय हिन्द! इंटरनेट पुलिस आपके डिवाइस पर पूरी तरह सक्रिय है। आपके सभी ब्रॉउज़र, ऐप्स और नेटवर्क पर 24/7 गश्त जारी है। कोई भी सवाल पूछें या 'Mic' दबाकर बोलें।
+            </div>
+          </div>
+
+          <!-- Quick Action Chips -->
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
+            <button class="apple-btn-secondary" style="padding:6px 12px; font-size:12px; border-radius:16px;" onclick="sendQuickText('Police Status Report')">📊 Status Report</button>
+            <button class="apple-btn-secondary" style="padding:6px 12px; font-size:12px; border-radius:16px;" onclick="sendQuickText('Simulate SQL Injection attack to test WAF')">⚡ Test SQLi Defense</button>
+            <button class="apple-btn-secondary" style="padding:6px 12px; font-size:12px; border-radius:16px;" onclick="sendQuickText('How does the DLP engine protect my PAN and Aadhaar number?')">🔒 PII & Card Protection</button>
+            <button class="apple-btn-secondary" style="padding:6px 12px; font-size:12px; border-radius:16px;" onclick="sendQuickText('Give me top 3 rules for complete mobile and laptop security')">🛡️ Security Rules</button>
+          </div>
+
+          <!-- Input Bar with Voice Mic -->
+          <div class="chat-input-bar">
+            <button class="voice-btn" id="mic-btn" onclick="toggleVoiceRecording()" title="Speak with Internet Police">🎙️</button>
+            <input type="text" id="chat-input" class="apple-input" placeholder="Type message or click mic to talk..." onkeydown="if(event.key==='Enter') sendPoliceMessage()">
+            <button class="apple-btn" onclick="sendPoliceMessage()">Send</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-Time Threat Intercept Feed -->
+      <div class="glass-panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <h3 style="font-size:16px;">⚡ Live Device Protection Intercepts</h3>
+          <button class="apple-btn-secondary apple-btn" style="padding:6px 12px; font-size:12px;" onclick="loadRecentLogs()">🔄 Refresh</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; font-size:13px;">
+            <thead>
+              <tr style="text-align:left; color:var(--apple-muted); border-bottom:1px solid rgba(255,255,255,0.1); font-size:11px; text-transform:uppercase;">
+                <th style="padding:10px 12px;">Time</th>
+                <th style="padding:10px 12px;">Subsystem</th>
+                <th style="padding:10px 12px;">Target / URL</th>
+                <th style="padding:10px 12px;">Action</th>
+                <th style="padding:10px 12px;">Severity</th>
+                <th style="padding:10px 12px;">Details</th>
+              </tr>
+            </thead>
+            <tbody id="police-logs-tbody">
+              <tr><td colspan="6" style="padding:16px; text-align:center; color:var(--apple-muted);">Monitoring device background network...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
