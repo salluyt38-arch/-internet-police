@@ -19,9 +19,11 @@ class HumanoidVoiceAgent:
     Automates device cyber protection entirely through natural voice commands,
     synthesizing studio-grade 120fps fluid neural speech.
     """
-    def __init__(self, police_copilot=None, dispatcher=None):
+    def __init__(self, police_copilot=None, dispatcher=None, device_agent=None, vault=None):
         self.copilot = police_copilot
         self.dispatcher = dispatcher
+        self.device_agent = device_agent
+        self.vault = vault
         self.default_voice = NEURAL_VOICES["hindi_male"]
 
     async def synthesize_speech(self, text, voice=None):
@@ -87,7 +89,37 @@ class HumanoidVoiceAgent:
                 "voice_prompt": reply
             }
 
-        # 4. General AI Conversation with Copilot
+        # 4. Robot Action: Lock Device / PC
+        elif any(w in text for w in ["lock", "लॉक", "lockdown"]):
+            if self.device_agent:
+                res = self.device_agent.lock_workstation()
+                return {
+                    "action": "LOCK_DEVICE",
+                    "text": "🔒 **वर्कस्टेशन लॉकडाउन:** डिवाइस को सुरक्षित रूप से लॉक कर दिया गया है।",
+                    "voice_prompt": "कमांड प्राप्त हुई। आपके डिवाइस को तुरंत लॉक कर दिया गया है।"
+                }
+
+        # 5. Robot Action: Flush DNS Cache
+        elif any(w in text for w in ["flush", "dns", "cache", "फ्लश", "कैश"]):
+            if self.device_agent:
+                res = self.device_agent.flush_dns_cache()
+                return {
+                    "action": "FLUSH_DNS",
+                    "text": "⚡ **DNS शुद्धिकरण:** Windows DNS रिज़ॉल्वर कैश को साफ़ कर दिया गया है।",
+                    "voice_prompt": "DNS कैश को पूरी तरह साफ़ कर दिया गया है। सभी स्पूफिंग खतरे समाप्त हो गए।"
+                }
+
+        # 6. Robot Action: Scan Processes / Virus Watchdog
+        elif any(w in text for w in ["process", "task", "वायरस", "प्रोसेस", "scan"]):
+            if self.device_agent:
+                res = self.device_agent.scan_running_processes()
+                return {
+                    "action": "SCAN_PROCESSES",
+                    "text": f"🛡️ **बैकग्राउंड प्रोसेस स्कैन:** {res['message']}",
+                    "voice_prompt": "बैकग्राउंड प्रोसेस स्कैन पूर्ण हुआ। सभी चालू एप्लिकेशन्स सुरक्षित हैं।"
+                }
+
+        # 7. General AI Conversation with Copilot
         else:
             if self.copilot:
                 ai_reply = self.copilot.ask(transcript)

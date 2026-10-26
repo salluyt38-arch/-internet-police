@@ -402,6 +402,81 @@ function toggleVoiceRecording() {
   speechRecognizer.start();
 }
 
+// Device Robot Actions
+async function executeDeviceAction(action) {
+  const outputEl = document.getElementById('device-action-output');
+  outputEl.innerText = 'Executing robotic device command...';
+
+  try {
+    if (action === 'flush_dns') {
+      const res = await fetch('/api/device/flush_dns', { method: 'POST' });
+      const data = await res.json();
+      outputEl.innerText = '✅ ' + data.message;
+      playHumanoidSpeech('Windows DNS रिज़ॉल्वर कैश साफ़ कर दिया गया है।');
+    } else if (action === 'connections') {
+      const res = await fetch('/api/device/connections');
+      const data = await res.json();
+      outputEl.innerText = `🔍 Inspected ${data.total_inspected} sockets. ${data.suspicious_found} non-standard connections found.`;
+      playHumanoidSpeech(`एक्टिव कनेक्शन स्कैन पूर्ण हुआ। कुल ${data.total_inspected} सॉकेट्स जाँचे गए।`);
+    } else if (action === 'lock') {
+      if (confirm('Are you sure you want to lock this computer workstation now?')) {
+        playHumanoidSpeech('डिवाइस को तुरंत लॉक किया जा रहा है।');
+        await fetch('/api/device/lock', { method: 'POST' });
+      } else {
+        outputEl.innerText = 'Lockdown canceled.';
+      }
+    }
+  } catch (e) {
+    outputEl.innerText = 'Error: ' + e.message;
+  }
+}
+
+// Password Vault & Dark Web Leak Auditor
+async function auditPasswordHealth() {
+  const pwdInput = document.getElementById('vault-pwd-input');
+  const outputEl = document.getElementById('vault-audit-output');
+  const pwd = pwdInput.value;
+
+  if (!pwd) {
+    alert('Please enter a password to audit.');
+    return;
+  }
+
+  outputEl.style.display = 'block';
+  outputEl.innerHTML = '<em>Auditing entropy & querying k-Anonymity dark-web breach registry...</em>';
+
+  try {
+    const res = await fetch('/api/vault/audit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pwd })
+    });
+    const data = await res.json();
+
+    let healthColor = '#34c759';
+    if (data.health === 'COMPROMISED') healthColor = '#ff3b30';
+    else if (data.health === 'MODERATE') healthColor = '#ff9500';
+
+    outputEl.innerHTML = `
+      <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+        <span>Security Health: <strong style="color:${healthColor};">${data.health}</strong></span>
+        <span>Score: <strong>${data.score}/100</strong></span>
+      </div>
+      <div style="font-size:11px; color:var(--apple-muted); line-height:1.4;">
+        ${data.feedback.map(f => `• ${escapeHtml(f)}`).join('<br>')}
+      </div>
+    `;
+
+    if (data.leak_count > 0) {
+      playHumanoidSpeech(`चेतावनी: यह पासवर्ड डार्क वेब पर ${data.leak_count} बार लीक पाया गया है। इसे तुरंत बदलें।`);
+    } else {
+      playHumanoidSpeech(`पासवर्ड सुरक्षा ऑडिट पूर्ण। स्कोर ${data.score} प्रतिशत है।`);
+    }
+  } catch (e) {
+    outputEl.innerText = 'Audit Error: ' + e.message;
+  }
+}
+
 function escapeHtml(text) {
   if (!text) return '';
   return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');

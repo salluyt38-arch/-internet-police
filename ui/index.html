@@ -290,6 +290,55 @@
         </div>
       </div>
 
+      <!-- Autonomous Device Robot & Password Vault Panel -->
+      <div class="glass-panel">
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:24px;">
+          
+          <!-- Robot Device Controls -->
+          <div>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+              <span style="font-size:20px;">🤖</span>
+              <h3 style="font-size:16px;">Device Robot Agent (लोकल रोबोट कंट्रोल)</h3>
+            </div>
+            <p style="font-size:12px; color:var(--apple-muted); margin-bottom:14px;">
+              Autonomous device hardware control & emergency security triggers:
+            </p>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <button class="apple-btn-secondary" style="padding:10px 14px; text-align:left; border-radius:12px; display:flex; justify-content:space-between; align-items:center;" onclick="executeDeviceAction('flush_dns')">
+                <span>⚡ <strong>Flush DNS Resolver Cache</strong></span>
+                <span style="font-size:11px; color:var(--apple-green);">ipconfig /flushdns</span>
+              </button>
+              <button class="apple-btn-secondary" style="padding:10px 14px; text-align:left; border-radius:12px; display:flex; justify-content:space-between; align-items:center;" onclick="executeDeviceAction('connections')">
+                <span>🔍 <strong>Scan Active Sockets</strong></span>
+                <span style="font-size:11px; color:var(--apple-blue-bright);">Inspect Ports</span>
+              </button>
+              <button class="apple-btn-secondary" style="padding:10px 14px; text-align:left; border-radius:12px; display:flex; justify-content:space-between; align-items:center;" onclick="executeDeviceAction('lock')">
+                <span>🔒 <strong>Emergency Workstation Lock</strong></span>
+                <span style="font-size:11px; color:var(--apple-red);">Lock PC Now</span>
+              </button>
+            </div>
+            <div id="device-action-output" style="font-size:12px; color:var(--apple-blue-bright); margin-top:10px; font-family:var(--sf-mono);"></div>
+          </div>
+
+          <!-- Password Manager & Dark Web Auditor -->
+          <div>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+              <span style="font-size:20px;">🔐</span>
+              <h3 style="font-size:16px;">Password Manager & Leak Auditor</h3>
+            </div>
+            <p style="font-size:12px; color:var(--apple-muted); margin-bottom:14px;">
+              Zero-knowledge vault & SHA-1 k-Anonymity dark web breach scanner:
+            </p>
+            <div style="display:flex; gap:8px; margin-bottom:10px;">
+              <input type="password" id="vault-pwd-input" class="apple-input" style="padding:10px 14px; font-size:13px;" placeholder="Test a password for dark-web breaches...">
+              <button class="apple-btn" style="padding:8px 14px; font-size:13px;" onclick="auditPasswordHealth()">Audit</button>
+            </div>
+            <div id="vault-audit-output" style="font-size:12px; background:rgba(0,0,0,0.3); padding:10px 14px; border-radius:8px; display:none;"></div>
+          </div>
+
+        </div>
+      </div>
+
       <!-- Real-Time Threat Intercept Feed -->
       <div class="glass-panel">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">

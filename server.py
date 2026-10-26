@@ -17,6 +17,8 @@ from core.threat_matrix import ThreatMatrix
 from core.ai_copilot import InternetPoliceCopilot
 from core.nightly_dispatch import NightlyDispatch
 from core.voice_engine import HumanoidVoiceAgent, NEURAL_VOICES
+from core.device_agent import LocalDeviceAgent
+from core.vault_engine import PasswordVaultEngine
 import asyncio
 
 UI_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ui")
@@ -59,6 +61,15 @@ class InternetPoliceHandler(http.server.SimpleHTTPRequestHandler):
         elif path == "/api/dispatch/latest":
             dispatcher = getattr(self.server, "dispatcher", None)
             self.send_json(dispatcher.get_latest_dispatches(5) if dispatcher else [])
+        elif path == "/api/device/vitals":
+            device = getattr(self.server, "device", None)
+            self.send_json(device.get_system_vitals() if device else {})
+        elif path == "/api/device/connections":
+            device = getattr(self.server, "device", None)
+            self.send_json(device.scan_active_connections() if device else {})
+        elif path == "/api/vault/credentials":
+            vault = getattr(self.server, "vault", None)
+            self.send_json(vault.list_credentials() if vault else [])
         elif path == "/api/voice/speak":
             # Real-time Neural Humanoid Audio Stream (MP3)
             query_params = urllib.parse.parse_qs(parsed.query)
@@ -144,6 +155,32 @@ class InternetPoliceHandler(http.server.SimpleHTTPRequestHandler):
             dispatcher = getattr(self.server, "dispatcher", None)
             res = dispatcher.generate_daily_summary() if dispatcher else {}
             log_event(client_ip, "POLICE", "21:00 Security Dispatch", "ALLOWED", "LOW", "Daily Nightly Intelligence Briefing dispatched")
+            self.send_json(res)
+
+        elif path == "/api/device/flush_dns":
+            device = getattr(self.server, "device", None)
+            res = device.flush_dns_cache() if device else {"status": "OFFLINE"}
+            self.send_json(res)
+
+        elif path == "/api/device/lock":
+            device = getattr(self.server, "device", None)
+            res = device.lock_workstation() if device else {"status": "OFFLINE"}
+            self.send_json(res)
+
+        elif path == "/api/vault/audit":
+            vault = getattr(self.server, "vault", None)
+            pwd = data.get("password", "")
+            res = vault.audit_password_strength(pwd) if vault else {}
+            self.send_json(res)
+
+        elif path == "/api/vault/credentials":
+            vault = getattr(self.server, "vault", None)
+            res = vault.save_credential(
+                data.get("service", "App"),
+                data.get("username", "User"),
+                data.get("password", ""),
+                data.get("master_password", "default_master_key")
+            ) if vault else {}
             self.send_json(res)
 
         elif path == "/api/settings":
