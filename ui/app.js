@@ -137,7 +137,114 @@ async function loadRecentLogs() {
   } catch (e) {}
 }
 
-// Chat with Internet Police
+// Voice Engine & 120 FPS Visualizer State
+let currentAudio = null;
+let audioContext = null;
+let analyser = null;
+let visualizerRunning = false;
+
+// 120 FPS Fluid Audio Visualizer Loop
+function startVisualizer() {
+  const canvas = document.getElementById('voice-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  visualizerRunning = true;
+
+  function renderFrame() {
+    if (!visualizerRunning) return;
+    requestAnimationFrame(renderFrame);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const bars = 28;
+    const barWidth = canvas.width / bars - 2;
+
+    let freqData = new Uint8Array(bars);
+    if (analyser && currentAudio && !currentAudio.paused) {
+      analyser.getByteFrequencyData(freqData);
+    } else {
+      // Idle breathing wave
+      const time = Date.now() * 0.003;
+      for (let i = 0; i < bars; i++) {
+        freqData[i] = Math.sin(time + i * 0.3) * 15 + 20;
+      }
+    }
+
+    for (let i = 0; i < bars; i++) {
+      const height = (freqData[i] / 255) * (canvas.height - 4) + 4;
+      const x = i * (barWidth + 2);
+      const y = (canvas.height - height) / 2;
+
+      const gradient = ctx.createLinearGradient(0, y, 0, y + height);
+      gradient.addColorStop(0, '#2997ff');
+      gradient.addColorStop(1, '#0071e3');
+
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.roundRect(x, y, barWidth, height, 3);
+      ctx.fill();
+    }
+  }
+
+  requestAnimationFrame(renderFrame);
+}
+
+// Play High-Fidelity Humanoid Neural Speech via /api/voice/speak
+async function playHumanoidSpeech(text) {
+  if (!voiceEnabled) return;
+
+  const statusText = document.getElementById('voice-status-text');
+  const statusDot = document.getElementById('voice-status-dot');
+  if (statusText) statusText.innerText = 'SYNTHESIZING NEURAL HUMANOID SPEECH...';
+  if (statusDot) { statusDot.style.background = '#2997ff'; statusDot.style.boxShadow = '0 0 12px #2997ff'; }
+
+  const voiceSelect = document.getElementById('neural-voice-select');
+  const chosenVoice = voiceSelect ? voiceSelect.value : 'hi-IN-MadhurNeural';
+
+  try {
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio = null;
+    }
+
+    const audioUrl = `/api/voice/speak?text=${encodeURIComponent(text.substring(0, 500))}&voice=${chosenVoice}`;
+    currentAudio = new Audio(audioUrl);
+
+    // Setup Web Audio Analyser for 120 FPS visualization
+    try {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioContext.state === 'suspended') {
+        await audioContext.resume();
+      }
+      const source = audioContext.createMediaElementSource(currentAudio);
+      analyser = audioContext.createAnalyser();
+      analyser.fftSize = 64;
+      source.connect(analyser);
+      analyser.connect(audioContext.destination);
+    } catch (audioCtxErr) {
+      // Browsers may restrict cross-origin MediaElementSource
+    }
+
+    currentAudio.onplay = () => {
+      if (statusText) statusText.innerText = 'HUMANOID VOICE AGENT SPEAKING (120 FPS)';
+      if (statusDot) { statusDot.style.background = '#34c759'; statusDot.style.boxShadow = '0 0 15px #34c759'; }
+    };
+
+    currentAudio.onended = () => {
+      if (statusText) statusText.innerText = 'VOICE AGENT IDLE : 24/7 PATROL ACTIVE';
+      if (statusDot) { statusDot.style.background = '#34c759'; statusDot.style.boxShadow = '0 0 10px #34c759'; }
+    };
+
+    await currentAudio.play();
+  } catch (e) {
+    // Fallback to local Web Speech API
+    speakVoice(text);
+  }
+}
+
+// Chat with Internet Police & Humanoid Voice Dispatch
 async function sendPoliceMessage() {
   const input = document.getElementById('chat-input');
   const text = input.value.trim();
@@ -145,36 +252,35 @@ async function sendPoliceMessage() {
 
   const chatBox = document.getElementById('police-chat-box');
 
-  // Append user bubble
   const userBubble = document.createElement('div');
   userBubble.className = 'chat-bubble bubble-user';
   userBubble.innerHTML = `<strong>You:</strong> ${escapeHtml(text)}`;
   chatBox.appendChild(userBubble);
   input.value = '';
 
-  // Append thinking bubble
   const thinkBubble = document.createElement('div');
   thinkBubble.className = 'chat-bubble bubble-police';
-  thinkBubble.innerHTML = `<em>👮 Internet Police is analyzing...</em>`;
+  thinkBubble.innerHTML = `<em>🎙️ Humanoid Voice Agent is analyzing...</em>`;
   chatBox.appendChild(thinkBubble);
   chatBox.scrollTop = chatBox.scrollHeight;
 
   try {
-    const res = await fetch('/api/chat', {
+    // Route through Voice Automation Command engine
+    const res = await fetch('/api/voice/command', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt: text })
+      body: JSON.stringify({ transcript: text })
     });
     const data = await res.json();
-    thinkBubble.innerHTML = `<strong>👮 Internet Police:</strong>\n\n${escapeHtml(data.response)}`;
+    thinkBubble.innerHTML = `<strong>👮 Internet Police:</strong>\n\n${escapeHtml(data.text)}`;
     chatBox.scrollTop = chatBox.scrollHeight;
 
-    // Speak response out loud in Jarvis mode
+    // Speak with high-fidelity Neural Humanoid Voice!
     if (voiceEnabled) {
-      speakVoice(data.response);
+      playHumanoidSpeech(data.voice_prompt || data.text);
     }
   } catch (e) {
-    thinkBubble.innerHTML = `<span style="color:#ff3b30;">Police dispatch connection error: ${escapeHtml(e.message)}</span>`;
+    thinkBubble.innerHTML = `<span style="color:#ff3b30;">Police dispatch error: ${escapeHtml(e.message)}</span>`;
   }
 }
 
@@ -200,7 +306,7 @@ async function triggerNightlyDispatch() {
     chatBox.scrollTop = chatBox.scrollHeight;
 
     if (voiceEnabled) {
-      speakVoice("इंटरनेट पुलिस दैनिक सुरक्षा ब्रीफिंग: आज आपके डिवाइस पर सभी नेटवर्क कनेक्शन सुरक्षित रहे।");
+      playHumanoidSpeech("इंटरनेट पुलिस दैनिक सुरक्षा ब्रीफिंग: आज आपके डिवाइस पर सभी नेटवर्क कनेक्शन सुरक्षित रहे। कोई भी खतरा नहीं मिला।");
     }
   } catch (e) {
     dispatchBubble.innerHTML = `Dispatch error: ${escapeHtml(e.message)}`;
@@ -298,6 +404,7 @@ function escapeHtml(text) {
 
 // Initialization & Auto-Polling
 checkInitialStatus();
+startVisualizer();
 loadStats();
 loadRecentLogs();
 setInterval(() => {

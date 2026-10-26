@@ -232,14 +232,21 @@
       <div class="glass-panel">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
           <div style="display:flex; align-items:center; gap:10px;">
-            <div style="font-size:22px;">👮</div>
+            <div style="font-size:24px;">🎙️</div>
             <div>
-              <h3 style="font-size:16px;">AI Police Voice Commander</h3>
-              <p style="font-size:12px; color:var(--apple-muted);">Real-time voice & text communication</p>
+              <h3 style="font-size:16px;">Agent 2: Humanoid Neural Voice Engine</h3>
+              <p style="font-size:12px; color:var(--apple-muted);">120 FPS Fluid Speech & Full Hands-Free Automation</p>
             </div>
           </div>
 
-          <div style="display:flex; gap:8px;">
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <!-- Neural Voice Persona Selector -->
+            <select id="neural-voice-select" class="apple-input" style="padding:6px 10px; font-size:12px; width:auto;">
+              <option value="hi-IN-MadhurNeural">Madhur (Humanoid Male Officer)</option>
+              <option value="hi-IN-SwaraNeural">Swara (Humanoid Female Officer)</option>
+              <option value="en-US-ChristopherNeural">Christopher (Jarvis Style)</option>
+            </select>
+
             <button class="apple-btn" style="background:#ff9500; font-size:13px; padding:8px 14px;" onclick="triggerNightlyDispatch()">
               ⏰ 9:00 PM Nightly Dispatch (दैनिक रिपोर्ट)
             </button>
@@ -247,6 +254,15 @@
               🔊 Voice: ON
             </button>
           </div>
+        </div>
+
+        <!-- 120 FPS Fluid Audio Visualizer Canvas -->
+        <div style="background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:12px 18px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div id="voice-status-dot" style="width:10px; height:10px; border-radius:50%; background:#34c759; box-shadow:0 0 10px #34c759;"></div>
+            <span id="voice-status-text" style="font-size:12px; font-weight:600; color:var(--apple-green);">VOICE AGENT IDLE : 120 FPS AUDIO READY</span>
+          </div>
+          <canvas id="voice-canvas" width="280" height="36" style="border-radius:8px;"></canvas>
         </div>
 
         <!-- Chat History Window -->

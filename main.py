@@ -17,6 +17,7 @@ from core.waf_shield import WAFShield
 from core.threat_matrix import ThreatMatrix
 from core.ai_copilot import InternetPoliceCopilot
 from core.nightly_dispatch import NightlyDispatch
+from core.voice_engine import HumanoidVoiceAgent
 from server import InternetPoliceHandler
 
 def banner():
@@ -72,6 +73,7 @@ def main():
     threat = ThreatMatrix()
     copilot = InternetPoliceCopilot()
     dispatcher = NightlyDispatch(ai_copilot=copilot)
+    voice_agent = HumanoidVoiceAgent(police_copilot=copilot, dispatcher=dispatcher)
 
     # 1. Start DNS Sinkhole thread
     dns_thread = threading.Thread(target=dns.start, daemon=True)
@@ -94,6 +96,7 @@ def main():
             self.threat = threat
             self.copilot = copilot
             self.dispatcher = dispatcher
+            self.voice_agent = voice_agent
 
     try:
         httpd = PoliceServer(("0.0.0.0", web_port), InternetPoliceHandler)

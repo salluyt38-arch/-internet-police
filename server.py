@@ -16,6 +16,8 @@ from core.waf_shield import WAFShield
 from core.threat_matrix import ThreatMatrix
 from core.ai_copilot import InternetPoliceCopilot
 from core.nightly_dispatch import NightlyDispatch
+from core.voice_engine import HumanoidVoiceAgent, NEURAL_VOICES
+import asyncio
 
 UI_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ui")
 
@@ -57,6 +59,27 @@ class InternetPoliceHandler(http.server.SimpleHTTPRequestHandler):
         elif path == "/api/dispatch/latest":
             dispatcher = getattr(self.server, "dispatcher", None)
             self.send_json(dispatcher.get_latest_dispatches(5) if dispatcher else [])
+        elif path == "/api/voice/speak":
+            # Real-time Neural Humanoid Audio Stream (MP3)
+            query_params = urllib.parse.parse_qs(parsed.query)
+            text_to_speak = query_params.get("text", [""])[0]
+            voice_choice = query_params.get("voice", ["hi-IN-MadhurNeural"])[0]
+            
+            voice_agent = getattr(self.server, "voice_agent", None)
+            if voice_agent and text_to_speak:
+                try:
+                    audio_bytes = asyncio.run(voice_agent.synthesize_speech(text_to_speak, voice=voice_choice))
+                    self.send_response(200)
+                    self.send_header("Content-Type", "audio/mpeg")
+                    self.send_header("Content-Length", str(len(audio_bytes)))
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    self.wfile.write(audio_bytes)
+                    return
+                except Exception as e:
+                    self.send_json({"error": str(e)}, status=500)
+                    return
+            self.send_error(400, "Missing text parameter")
         else:
             if path == "/":
                 self.path = "/index.html"
@@ -97,6 +120,15 @@ class InternetPoliceHandler(http.server.SimpleHTTPRequestHandler):
             prompt = data.get("prompt", "").strip()
             resp_text = copilot.ask(prompt) if copilot else "Police Commander offline."
             self.send_json({"response": resp_text})
+
+        elif path == "/api/voice/command":
+            voice_agent = getattr(self.server, "voice_agent", None)
+            transcript = data.get("transcript", "").strip()
+            if voice_agent and transcript:
+                res = voice_agent.execute_voice_command(transcript)
+                self.send_json(res)
+            else:
+                self.send_json({"text": "वॉइस कमांड प्राप्त नहीं हुआ।", "voice_prompt": "कमांड समझ नहीं आई।"})
 
         elif path == "/api/permissions":
             if data.get("all_granted"):
