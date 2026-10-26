@@ -124,6 +124,13 @@ class InternetPoliceCopilot:
         if not api_key:
             api_key = get_setting("ai_api_key", "").strip()
 
+        # Safety Check: If user pasted a URL instead of an actual API key
+        if api_key.startswith("http://") or api_key.startswith("https://"):
+            return (
+                "⚠️ **सूचना:** आपने API कुंजी की जगह GitHub का लिंक पेस्ट कर दिया है।\n\n"
+                "इंटरनेट पुलिस वर्तमान में ऑफलाइन इंजन पर सुरक्षित काम कर रही है। कृपया सेटिंग्स में जाकर अपनी वास्तविक Groq API कुंजी (`gsk_...`) डालें।"
+            )
+
         # If user has an active key in database
         try:
             if (provider == "groq" or api_key.startswith("gsk_")) and api_key:

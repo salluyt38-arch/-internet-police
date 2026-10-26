@@ -21,6 +21,11 @@ async function handleKeySubmit() {
   const key = document.getElementById('setup-api-key').value.trim();
   const provider = document.getElementById('setup-provider-select').value;
 
+  if (key.startsWith('http://') || key.startsWith('https://') || key.includes('github.com')) {
+    alert('⚠️ अमान्य कुंजी: आपने API Key के स्थान पर GitHub का लिंक डाल दिया है!\n\nकृपया अपनी वास्तविक Groq कुंजी (gsk_...) या Gemini कुंजी (AIza...) पेस्ट करें।');
+    return;
+  }
+
   // Save to backend
   await fetch('/api/settings', {
     method: 'POST',
