@@ -2,9 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>INTERNET POLICE : Apple 17 Series AI Cyber Guardian</title>
   <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="InternetPolice">
+  <meta name="theme-color" content="#000000">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230071e3'/><text y='70' x='10' font-size='70'>👮</text></svg>">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="theme-titanium">
@@ -24,6 +29,9 @@
         <div class="wave-bar"></div>
         <div class="wave-bar"></div>
       </div>
+      <button id="btn-install-pwa" style="background:#0071e3; color:#fff; border:none; border-radius:14px; padding:4px 10px; font-size:11px; font-weight:600; cursor:pointer; margin-left:6px; display:flex; align-items:center; gap:4px;" onclick="event.stopPropagation(); triggerPwaInstall();">
+        📲 Install App
+      </button>
     </div>
   </div>
 
@@ -178,6 +186,33 @@
           </button>
           <button class="apple-btn-secondary apple-btn" style="border-radius:16px;" onclick="closePermissionModal()">
             Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PWA Install Modal (Apple Style) -->
+    <div id="pwa-install-modal" class="permission-modal">
+      <div class="permission-sheet" style="text-align:center;">
+        <div style="font-size:36px; margin-bottom:8px;">📲</div>
+        <h2 style="font-size:20px; font-weight:700;">Install Internet Police App</h2>
+        <p style="font-size:13px; color:var(--apple-muted); margin:8px 0 20px;">
+          Install this app directly on your iPhone, Android, or Laptop for 24/7 background security without browser address bar.
+        </p>
+
+        <div id="pwa-install-instructions" style="background:rgba(255,255,255,0.05); padding:16px; border-radius:14px; text-align:left; font-size:13px; line-height:1.6; margin-bottom:20px;">
+          <strong>On iPhone / iPad:</strong><br>
+          1. Tap the <strong>Share</strong> button (⬆️) in Safari bottom bar.<br>
+          2. Scroll down and tap <strong>'Add to Home Screen'</strong> (➕).<br>
+          3. Tap <strong>'Add'</strong> in the top right corner.
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <button id="pwa-prompt-btn" class="apple-btn" style="padding:12px; font-size:15px; border-radius:14px;" onclick="executePwaNativeInstall()">
+            📲 Direct Install Now
+          </button>
+          <button class="apple-btn-secondary apple-btn" style="border-radius:14px;" onclick="closePwaModal()">
+            Close
           </button>
         </div>
       </div>

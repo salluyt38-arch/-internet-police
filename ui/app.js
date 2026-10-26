@@ -1,3 +1,56 @@
+// PWA Direct Mobile & Desktop Installation (Soundwave Style)
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const installBtn = document.getElementById('btn-install-pwa');
+  if (installBtn) installBtn.style.display = 'inline-flex';
+});
+
+function triggerPwaInstall() {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+  if (isStandalone) {
+    alert('Internet Police is already installed and running natively on this device! 🛡️');
+    return;
+  }
+
+  const modal = document.getElementById('pwa-install-modal');
+  const instructions = document.getElementById('pwa-install-instructions');
+  const promptBtn = document.getElementById('pwa-prompt-btn');
+
+  modal.classList.add('active');
+
+  if (deferredPrompt) {
+    // Android / Desktop Chrome / Edge
+    instructions.innerHTML = '<strong>Direct 1-Click Install Ready:</strong><br>Click the button below to install Internet Police directly onto your home screen or desktop application drawer.';
+    promptBtn.style.display = 'block';
+  } else if (isIOS) {
+    // iPhone / iPad Safari
+    instructions.innerHTML = '<strong>On your iPhone / iPad:</strong><br>1. Tap the <strong>Share</strong> button (⬆️) in Safari bottom bar.<br>2. Scroll down and tap <strong>"Add to Home Screen"</strong> (➕).<br>3. Tap <strong>"Add"</strong> in the top-right corner.';
+    promptBtn.style.display = 'none';
+  } else {
+    // Other browsers
+    instructions.innerHTML = '<strong>To Install on your Device:</strong><br>1. Click the browser menu (⋮ or ⋯).<br>2. Select <strong>"Install Internet Police"</strong> or <strong>"Add to Home Screen"</strong>.';
+    promptBtn.style.display = 'none';
+  }
+}
+
+async function executePwaNativeInstall() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    closePwaModal();
+  }
+}
+
+function closePwaModal() {
+  document.getElementById('pwa-install-modal').classList.remove('active');
+}
+
 // State
 let voiceEnabled = true;
 let isRecording = false;
