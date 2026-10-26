@@ -44,7 +44,7 @@ class NightlyDispatch:
         c.execute('''
             INSERT INTO dispatches (dispatch_date, timestamp, total_events, ads_blocked, threats_blocked, dlp_leaks_prevented, summary_text)
             VALUES (?, ?, ?, ?, ?, ?, ?)
-        ''', (date_str, time.time(), stats['total_events'], stats['blocked_ads'], stats['threats_blocked'], stats['dlp_alerts'], summary_text))
+        ''', (date_str, time.time(), stats.get('total_events', 0), stats.get('blocked_ads', 0), stats.get('blocked_threats', 0), stats.get('dlp_alerts', 0), summary_text))
         conn.commit()
         conn.close()
 
