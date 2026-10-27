@@ -20,6 +20,11 @@ from core.nightly_dispatch import NightlyDispatch
 from core.voice_engine import HumanoidVoiceAgent
 from core.device_agent import LocalDeviceAgent
 from core.vault_engine import PasswordVaultEngine
+from core.auth_rbac import init_default_users
+from core.wazuh_adapter import WazuhAdapter
+from core.scan_engine import AuthorizedScanEngine
+from core.stix_intel import STIXIntelManager
+from core.hitl_approvals import HITLApprovalManager
 from server import InternetPoliceHandler
 
 def banner():
@@ -51,6 +56,7 @@ def run_nightly_scheduler(dispatcher):
 def main():
     banner()
     init_db()
+    init_default_users()
 
     # Pre-seed verified Groq key from aegis-guard if available
     try:
@@ -77,6 +83,10 @@ def main():
     dispatcher = NightlyDispatch(ai_copilot=copilot)
     device = LocalDeviceAgent()
     vault = PasswordVaultEngine()
+    wazuh = WazuhAdapter()
+    scan_engine = AuthorizedScanEngine()
+    stix = STIXIntelManager()
+    hitl = HITLApprovalManager()
     voice_agent = HumanoidVoiceAgent(police_copilot=copilot, dispatcher=dispatcher, device_agent=device, vault=vault)
 
     # 1. Start DNS Sinkhole thread
@@ -103,6 +113,10 @@ def main():
             self.voice_agent = voice_agent
             self.device = device
             self.vault = vault
+            self.wazuh = wazuh
+            self.scan_engine = scan_engine
+            self.stix = stix
+            self.hitl = hitl
 
     try:
         httpd = PoliceServer(("0.0.0.0", web_port), InternetPoliceHandler)

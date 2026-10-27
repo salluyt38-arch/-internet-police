@@ -482,6 +482,86 @@ body.theme-midnight {
   100% { transform: scale(1); }
 }
 
+/* Navigation Pills & Modular Tabs */
+.nav-pill-bar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 6px 4px;
+  margin-bottom: 20px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.nav-pill-bar::-webkit-scrollbar {
+  display: none;
+}
+.nav-pill {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--apple-text);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.nav-pill:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+.nav-pill.active {
+  background: var(--apple-blue);
+  border-color: var(--apple-blue-bright);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(0, 113, 227, 0.4);
+}
+.badge-count {
+  background: var(--apple-red);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+
+/* Tab Panels */
+.tab-content {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+.tab-content.active {
+  display: block;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Status & Severity Badges */
+.badge-crit { background: rgba(255, 59, 48, 0.2); border: 1px solid var(--apple-red); color: #ff6b64; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+.badge-high { background: rgba(255, 149, 0, 0.2); border: 1px solid var(--apple-amber); color: #ffb340; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+.badge-med { background: rgba(255, 204, 0, 0.2); border: 1px solid #ffcc00; color: #ffdd44; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+.badge-low { background: rgba(52, 199, 89, 0.2); border: 1px solid var(--apple-green); color: #6ee787; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+.badge-info { background: rgba(41, 151, 255, 0.2); border: 1px solid var(--apple-blue); color: #64b5f6; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+
+/* Posture Meter */
+.meter-container {
+  height: 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  margin: 10px 0;
+}
+.meter-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.6s ease;
+}
+
 /* Mobile Responsive */
 @media (max-width: 640px) {
   .hero-title { font-size: 28px; }

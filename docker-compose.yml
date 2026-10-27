@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  cyber-agent:
+    build: .
+    container_name: unified-ai-cyber-agent
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "5353:5353/udp"
+    env_file:
+      - .env.example
+    environment:
+      - WEB_PORT=8080
+      - DNS_PORT=5353
+    volumes:
+      - ./internet_police.db:/app/internet_police.db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/status"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - cyber-net
+
+  # Optional 100% Offline Local LLM (Ollama)
+  # Uncomment if running offline models locally
+  # ollama:
+  #   image: ollama/ollama:latest
+  #   container_name: ollama-local
+  #   restart: unless-stopped
+  #   ports:
+  #     - "11434:11434"
+  #   volumes:
+  #     - ollama_models:/root/.ollama
+  #   networks:
+  #     - cyber-net
+
+networks:
+  cyber-net:
+    driver: bridge
+
+volumes:
+  ollama_models:
