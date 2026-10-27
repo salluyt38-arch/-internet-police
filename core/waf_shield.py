@@ -1,5 +1,6 @@
 import time
 import re
+import urllib.parse
 from collections import defaultdict
 
 class WAFShield:
@@ -41,7 +42,11 @@ class WAFShield:
         if rate_blocked:
             return {"blocked": True, "type": "DDOS_FLOOD", "risk": "CRITICAL", "reason": reason}
 
-        payload = f"{path} {body}"
+        # URL-decode path and body to catch percent-encoded attacks (e.g. %20UNION%20SELECT%20 or %2e%2e%2f)
+        decoded_path = urllib.parse.unquote_plus(path)
+        decoded_body = urllib.parse.unquote_plus(body) if isinstance(body, str) else str(body)
+
+        payload = f"{decoded_path} {decoded_body}"
         if headers and "User-Agent" in headers:
             payload += f" {headers['User-Agent']}"
 
